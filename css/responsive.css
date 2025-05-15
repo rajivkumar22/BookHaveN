@@ -1,0 +1,460 @@
+/* Responsive Styles for BookHaven */
+
+/* Tablet Styles (768px to 1023px) */
+@media screen and (max-width: 1023px) {
+    /* Base Adjustments */
+    :root {
+        --header-height: 70px;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    /* Header & Navigation */
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+    
+    .search-container {
+        width: 250px;
+    }
+    
+    .main-nav a {
+        padding: 0 15px;
+    }
+    
+    /* Hero Section */
+    .offers-banner {
+        height: 250px;
+    }
+    
+    .banner-content {
+        max-width: 400px;
+        padding: 20px;
+    }
+    
+    .banner-content h2 {
+        font-size: 1.8rem;
+    }
+    
+    /* Book Cards */
+    .book-image {
+        height: 250px;
+    }
+    
+    /* Categories Section */
+    .category-card {
+        min-width: 180px;
+        height: 130px;
+    }
+    
+    /* Modal Adjustments */
+    .modal-content {
+        width: 90%;
+    }
+    
+    .checkout-sections {
+        gap: 20px;
+    }
+}
+
+/* Mobile Landscape Styles (576px to 767px) */
+@media screen and (max-width: 767px) {
+    /* Base Adjustments */
+    :root {
+        --header-height: 60px;
+        --nav-height: 0;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    /* Header & Navigation */
+    .header-right {
+        gap: 10px;
+    }
+    
+    .search-container {
+        display: none;
+    }
+    
+    nav {
+        display: none;
+    }
+    
+    .mobile-menu-toggle {
+        display: block;
+    }
+    
+    /* Dashboard Modal */
+    .modal-content.dashboard-content {
+        width: 95%;
+    }
+    
+    .dashboard-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .dashboard-tab {
+        padding: 8px 15px;
+        font-size: 1rem;
+    }
+    
+    /* Checkout Modal */
+    .checkout-sections {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Book Preview Modal */
+    .preview-header {
+        height: 250px;
+    }
+    
+    .preview-title {
+        font-size: 1.5rem;
+    }
+    
+    /* Book Listings */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filters {
+        margin-top: 15px;
+        width: 100%;
+    }
+    
+    .filter-group {
+        flex: 1;
+        min-width: calc(50% - 8px);
+    }
+    
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+    
+    .book-image {
+        height: 220px;
+    }
+    
+    /* Footer */
+    .footer-content {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+}
+
+/* Mobile Portrait Styles (up to 575px) */
+@media screen and (max-width: 575px) {
+    /* Base Adjustments */
+    .container {
+        padding: 0 10px;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .section-title:after {
+        width: 60px;
+        height: 3px;
+    }
+    
+    /* Header */
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+    
+    .language-selector, .dark-mode-toggle {
+        display: none;
+    }
+    
+    /* Hero Section */
+    .offers-banner {
+        height: 200px;
+    }
+    
+    .banner-content {
+        max-width: 280px;
+        padding: 15px;
+    }
+    
+    .banner-content h2 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    
+    .banner-content p {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    
+    .banner-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+    /* Categories Section */
+    .category-card {
+        min-width: 140px;
+        height: 110px;
+        margin-right: 10px;
+    }
+    
+    .category-card-title {
+        font-size: 1rem;
+    }
+    
+    /* Book Listings */
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+    
+    .book-image {
+        height: 200px;
+    }
+    
+    .book-title {
+        font-size: 1rem;
+    }
+    
+    .book-author {
+        font-size: 0.8rem;
+    }
+    
+    .stars {
+        font-size: 0.8rem;
+    }
+    
+    .price {
+        font-size: 1rem;
+    }
+    
+    .add-to-cart {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    /* Pagination */
+    .pagination-btn, .pagination-ellipsis {
+        width: 35px;
+        height: 35px;
+        margin: 0 3px;
+    }
+    
+    /* Newsletter Section */
+    .newsletter-content h2 {
+        font-size: 1.3rem;
+    }
+    
+    .newsletter-content p {
+        font-size: 0.9rem;
+    }
+    
+    #newsletter-form {
+        flex-direction: column;
+    }
+    
+    #newsletter-email {
+        border-radius: var(--button-radius);
+        margin-bottom: 10px;
+    }
+    
+    #newsletter-form button {
+        border-radius: var(--button-radius);
+    }
+    
+    /* Modal Adjustments */
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .auth-tabs button {
+        padding: 8px 15px;
+        font-size: 1rem;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    /* Cart Modal */
+    .cart-item {
+        flex-wrap: wrap;
+    }
+    
+    .cart-item-image {
+        width: 60px;
+        height: 80px;
+    }
+    
+    .cart-item-info {
+        width: calc(100% - 75px);
+    }
+    
+    .cart-item-quantity, .cart-item-total {
+        margin-top: 10px;
+    }
+    
+    .cart-item-quantity {
+        margin-left: 75px;
+    }
+    
+    .cart-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* Book Preview Modal */
+    .preview-header {
+        height: 200px;
+    }
+    
+    .preview-title {
+        font-size: 1.3rem;
+    }
+    
+    .preview-author {
+        font-size: 1rem;
+    }
+    
+    .preview-body {
+        padding: 20px;
+    }
+    
+    .preview-detail-row {
+        flex-wrap: wrap;
+    }
+    
+    .preview-detail {
+        width: 50%;
+        margin-bottom: 10px;
+    }
+    
+    .preview-price-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    /* Dashboard Modal */
+    .dashboard-tab {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .wishlist-items {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    
+    .wishlist-image {
+        height: 170px;
+    }
+    
+    /* Order Confirmation Modal */
+    .order-success i {
+        font-size: 3rem;
+    }
+    
+    .order-success h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Small Mobile Devices (up to 374px) */
+@media screen and (max-width: 374px) {
+    /* Base Adjustments */
+    :root {
+        --header-height: 50px;
+    }
+    
+    /* Header */
+    .logo h1 {
+        font-size: 1.1rem;
+    }
+    
+    .cart-icon, .user-icon {
+        font-size: 1.3rem;
+    }
+    
+    /* Book Listings */
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+    
+    .book-image {
+        height: 180px;
+    }
+    
+    /* Modals */
+    .modal-content {
+        padding: 15px;
+    }
+    
+    .close-modal {
+        top: 15px;
+        right: 15px;
+    }
+    
+    /* Auth Forms */
+    .auth-tabs button {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .form-group input {
+        padding: 10px;
+    }
+    
+    /* Categories */
+    .category-card {
+        min-width: 120px;
+        height: 100px;
+    }
+    
+    .category-nav-btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Landscape Orientation Fixes */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        max-height: 85vh;
+    }
+    
+    .preview-header {
+        height: 200px;
+    }
+    
+    .mobile-menu {
+        overflow-y: auto;
+    }
+}
+
+/* High Resolution Displays */
+@media screen and (min-width: 1400px) {
+    :root {
+        --container-width: 1320px;
+    }
+    
+    .book-image {
+        height: 320px;
+    }
+    
+    .category-card {
+        min-width: 220px;
+        height: 170px;
+    }
+}

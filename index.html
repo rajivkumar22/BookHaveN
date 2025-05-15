@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookHaven - Your Online Bookstore</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Library for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1><a href="#"><i class="fas fa-book"></i> BookHaven</a></h1>
+                </div>
+                <div class="header-right">
+                    <div class="language-selector">
+                        <select id="language-selector">
+                            <option value="en">English</option>
+                            <option value="hi">हिंदी</option>
+                            <option value="mai">मैथिली</option>
+                        </select>
+                    </div>
+                    <div class="dark-mode-toggle">
+                        <i class="fas fa-moon" id="dark-mode-btn"></i>
+                    </div>
+                    <div class="search-container">
+                        <form id="search-form">
+                            <input type="text" id="search-input" placeholder="Search books, authors...">
+                            <button type="submit"><i class="fas fa-search"></i></button>
+                        </form>
+                        <div class="search-suggestions" id="search-suggestions"></div>
+                    </div>
+                    <div class="user-actions">
+                        <div class="cart-icon" id="cart-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count" id="cart-count">0</span>
+                        </div>
+                        <div class="user-icon" id="user-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="container">
+            <div class="mobile-menu-header">
+                <div class="close-menu" id="close-mobile-menu">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="mobile-menu-content">
+                <div class="mobile-search">
+                    <form id="mobile-search-form">
+                        <input type="text" placeholder="Search books, authors...">
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+                <ul class="mobile-nav">
+                    <li><a href="#" data-i18n="nav_home">Home</a></li>
+                    <li><a href="#categories" data-i18n="nav_categories">Categories</a></li>
+                    <li><a href="#bestsellers" data-i18n="nav_bestsellers">Bestsellers</a></li>
+                    <li><a href="#new-arrivals" data-i18n="nav_new_arrivals">New Arrivals</a></li>
+                    <li><a href="#" class="login-link" data-i18n="nav_login">Login</a></li>
+                    <li class="dashboard-link hidden"><a href="#" data-i18n="nav_dashboard">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="main-nav">
+                <li><a href="#" data-i18n="nav_home">Home</a></li>
+                <li><a href="#categories" data-i18n="nav_categories">Categories</a></li>
+                <li><a href="#bestsellers" data-i18n="nav_bestsellers">Bestsellers</a></li>
+                <li><a href="#new-arrivals" data-i18n="nav_new_arrivals">New Arrivals</a></li>
+                <li><a href="#offers" data-i18n="nav_offers">Special Offers</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero/Banner Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="offers-banner" id="offers-banner">
+                <!-- Banners will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="categories_title">Browse By Categories</h2>
+            <div class="categories-wrapper">
+                <button class="category-nav-btn prev" id="category-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="categories-carousel" id="categories-carousel">
+                    <!-- Categories will be added dynamically here -->
+                </div>
+                <button class="category-nav-btn next" id="category-next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Book Listings Section -->
+    <section class="book-listings">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-i18n="books_title">Our Collection</h2>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="filter-genre" data-i18n="filter_genre">Genre:</label>
+                        <select id="filter-genre">
+                            <option value="all" data-i18n="filter_all">All</option>
+                            <!-- Genres will be added dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-price" data-i18n="filter_price">Price:</label>
+                        <select id="filter-price">
+                            <option value="all" data-i18n="filter_all">All</option>
+                            <option value="under10" data-i18n="filter_under_10">Under $10</option>
+                            <option value="10to20" data-i18n="filter_10_to_20">$10 - $20</option>
+                            <option value="20to30" data-i18n="filter_20_to_30">$20 - $30</option>
+                            <option value="over30" data-i18n="filter_over_30">Over $30</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-rating" data-i18n="filter_rating">Rating:</label>
+                        <select id="filter-rating">
+                            <option value="all" data-i18n="filter_all">All</option>
+                            <option value="4plus" data-i18n="filter_4_plus">4+ Stars</option>
+                            <option value="3plus" data-i18n="filter_3_plus">3+ Stars</option>
+                            <option value="2plus" data-i18n="filter_2_plus">2+ Stars</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="books-grid" id="books-container">
+                <!-- Books will be displayed here -->
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be added dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Recently Viewed Section -->
+    <section id="recently-viewed" class="recently-viewed-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="recently_viewed_title">Recently Viewed</h2>
+            <div class="recently-viewed-carousel" id="recently-viewed-carousel">
+                <!-- Recently viewed books will be added dynamically here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2 data-i18n="newsletter_title">Subscribe to Our Newsletter</h2>
+                <p data-i18n="newsletter_desc">Get exclusive offers, new releases and reading recommendations delivered to your inbox.</p>
+                <form id="newsletter-form">
+                    <input type="email" id="newsletter-email" placeholder="Enter your email address" required>
+                    <button type="submit" data-i18n="newsletter_btn">Subscribe</button>
+                </form>
+                <div id="newsletter-message"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3 data-i18n="footer_about_title">About BookHaven</h3>
+                    <p data-i18n="footer_about_text">BookHaven is your one-stop destination for discovering new books, authors, and genres. We aim to make reading accessible for everyone.</p>
+                </div>
+                <div class="footer-column">
+                    <h3 data-i18n="footer_quick_links">Quick Links</h3>
+                    <ul>
+                        <li><a href="#" data-i18n="footer_home">Home</a></li>
+                        <li><a href="#categories" data-i18n="footer_categories">Categories</a></li>
+                        <li><a href="#bestsellers" data-i18n="footer_bestsellers">Bestsellers</a></li>
+                        <li><a href="#offers" data-i18n="footer_offers">Special Offers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 data-i18n="footer_help">Help</h3>
+                    <ul>
+                        <li><a href="#" data-i18n="footer_faq">FAQ</a></li>
+                        <li><a href="#" data-i18n="footer_shipping">Shipping</a></li>
+                        <li><a href="#" data-i18n="footer_returns">Returns</a></li>
+                        <li><a href="#" data-i18n="footer_contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 data-i18n="footer_follow">Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 BookHaven. <span data-i18n="footer_rights">All Rights Reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Components -->
+    <!-- Login/Signup Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-auth-modal">&times;</span>
+            <div class="auth-tabs">
+                <button id="login-tab" class="active" data-i18n="login_tab">Login</button>
+                <button id="signup-tab" data-i18n="signup_tab">Sign Up</button>
+            </div>
+            <div class="auth-forms">
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="login-email" data-i18n="login_email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password" data-i18n="login_password">Password</label>
+                        <div class="password-field">
+                            <input type="password" id="login-password" required>
+                            <i class="fas fa-eye-slash toggle-password" data-target="login-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group remember-me">
+                        <input type="checkbox" id="remember-me">
+                        <label for="remember-me" data-i18n="login_remember">Remember me</label>
+                    </div>
+                    <button type="submit" data-i18n="login_btn">Login</button>
+                    <p class="forgot-password"><a href="#" data-i18n="login_forgot">Forgot Password?</a></p>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="auth-form hidden">
+                    <div class="form-group">
+                        <label for="signup-name" data-i18n="signup_name">Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email" data-i18n="signup_email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password" data-i18n="signup_password">Password</label>
+                        <div class="password-field">
+                            <input type="password" id="signup-password" required>
+                            <i class="fas fa-eye-slash toggle-password" data-target="signup-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password" data-i18n="signup_confirm">Confirm Password</label>
+                        <div class="password-field">
+                            <input type="password" id="signup-confirm-password" required>
+                            <i class="fas fa-eye-slash toggle-password" data-target="signup-confirm-password"></i>
+                        </div>
+                    </div>
+                    <div class="form-group agree-terms">
+                        <input type="checkbox" id="agree-terms" required>
+                        <label for="agree-terms" data-i18n="signup_terms">I agree to the Terms and Conditions</label>
+                    </div>
+                    <button type="submit" data-i18n="signup_btn">Sign Up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Preview Modal -->
+    <div class="modal" id="book-preview-modal">
+        <div class="modal-content book-preview">
+            <span class="close-modal" id="close-book-preview">&times;</span>
+            <div class="book-preview-content" id="book-preview-content">
+                <!-- Book preview content will be added dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Modal -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content cart-modal-content">
+            <span class="close-modal" id="close-cart-modal">&times;</span>
+            <h2 data-i18n="cart_title">Your Shopping Cart</h2>
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items will be added dynamically -->
+            </div>
+            <div class="cart-summary" id="cart-summary">
+                <!-- Cart summary will be added dynamically -->
+            </div>
+            <div class="cart-buttons">
+                <button id="continue-shopping" class="secondary-btn" data-i18n="cart_continue">Continue Shopping</button>
+                <button id="checkout-btn" class="primary-btn" data-i18n="cart_checkout">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content checkout-modal-content">
+            <span class="close-modal" id="close-checkout-modal">&times;</span>
+            <h2 data-i18n="checkout_title">Checkout</h2>
+            <form id="checkout-form">
+                <div class="checkout-sections">
+                    <div class="checkout-section">
+                        <h3 data-i18n="checkout_shipping">Shipping Information</h3>
+                        <div class="form-group">
+                            <label for="checkout-name" data-i18n="checkout_name">Full Name</label>
+                            <input type="text" id="checkout-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkout-email" data-i18n="checkout_email">Email Address</label>
+                            <input type="email" id="checkout-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkout-address" data-i18n="checkout_address">Address</label>
+                            <input type="text" id="checkout-address" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="checkout-city" data-i18n="checkout_city">City</label>
+                                <input type="text" id="checkout-city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="checkout-state" data-i18n="checkout_state">State</label>
+                                <input type="text" id="checkout-state" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="checkout-zip" data-i18n="checkout_zip">ZIP Code</label>
+                                <input type="text" id="checkout-zip" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="checkout-country" data-i18n="checkout_country">Country</label>
+                                <input type="text" id="checkout-country" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="checkout-section">
+                        <h3 data-i18n="checkout_payment">Payment Information</h3>
+                        <div class="form-group">
+                            <label for="card-name" data-i18n="checkout_card_name">Name on Card</label>
+                            <input type="text" id="card-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-number" data-i18n="checkout_card_number">Card Number</label>
+                            <input type="text" id="card-number" required placeholder="XXXX XXXX XXXX XXXX">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="card-expiry" data-i18n="checkout_card_expiry">Expiry Date</label>
+                                <input type="text" id="card-expiry" required placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-cvv" data-i18n="checkout_card_cvv">CVV</label>
+                                <input type="text" id="card-cvv" required placeholder="XXX">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="checkout-summary" id="checkout-summary">
+                    <!-- Checkout summary will be added dynamically -->
+                </div>
+                <button type="submit" class="primary-btn" data-i18n="checkout_place_order">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div class="modal" id="order-confirmation-modal">
+        <div class="modal-content order-confirmation">
+            <span class="close-modal" id="close-confirmation-modal">&times;</span>
+            <div class="order-success">
+                <i class="fas fa-check-circle"></i>
+                <h2 data-i18n="order_success">Order Placed Successfully!</h2>
+                <p data-i18n="order_thank_you">Thank you for shopping with BookHaven.</p>
+            </div>
+            <div class="order-details" id="order-details">
+                <!-- Order details will be added dynamically -->
+            </div>
+            <button id="continue-shopping-after-order" class="primary-btn" data-i18n="order_continue">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- User Dashboard Modal -->
+    <div class="modal" id="dashboard-modal">
+        <div class="modal-content dashboard-content">
+            <span class="close-modal" id="close-dashboard-modal">&times;</span>
+            <h2 data-i18n="dashboard_title">My Account</h2>
+            <div class="dashboard-tabs">
+                <button id="profile-tab" class="dashboard-tab active" data-i18n="dashboard_profile">Profile</button>
+                <button id="wishlist-tab" class="dashboard-tab" data-i18n="dashboard_wishlist">Wishlist</button>
+                <button id="orders-tab" class="dashboard-tab" data-i18n="dashboard_orders">Orders</button>
+            </div>
+            
+            <!-- Profile Tab Content -->
+            <div class="dashboard-panel" id="profile-panel">
+                <h3 data-i18n="profile_personal_info">Personal Information</h3>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="profile-name" data-i18n="profile_name">Full Name</label>
+                        <input type="text" id="profile-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email" data-i18n="profile_email">Email</label>
+                        <input type="email" id="profile-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-phone" data-i18n="profile_phone">Phone</label>
+                        <input type="tel" id="profile-phone">
+                    </div>
+                    <h3 data-i18n="profile_address">Address</h3>
+                    <div class="form-group">
+                        <label for="profile-address" data-i18n="profile_address_line">Street Address</label>
+                        <input type="text" id="profile-address">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-city" data-i18n="profile_city">City</label>
+                            <input type="text" id="profile-city">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-state" data-i18n="profile_state">State</label>
+                            <input type="text" id="profile-state">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-zip" data-i18n="profile_zip">ZIP Code</label>
+                            <input type="text" id="profile-zip">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-country" data-i18n="profile_country">Country</label>
+                            <input type="text" id="profile-country">
+                        </div>
+                    </div>
+                    <button type="submit" class="primary-btn" data-i18n="profile_save">Save Changes</button>
+                </form>
+            </div>
+            
+            <!-- Wishlist Tab Content -->
+            <div class="dashboard-panel hidden" id="wishlist-panel">
+                <h3 data-i18n="wishlist_title">My Wishlist</h3>
+                <div class="wishlist-items" id="wishlist-items">
+                    <!-- Wishlist items will be added dynamically -->
+                </div>
+            </div>
+            
+            <!-- Orders Tab Content -->
+            <div class="dashboard-panel hidden" id="orders-panel">
+                <h3 data-i18n="orders_title">My Orders</h3>
+                <div class="orders-list" id="orders-list">
+                    <!-- Order history will be added dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter Confirmation Modal -->
+    <div class="modal" id="newsletter-modal">
+        <div class="modal-content newsletter-confirmation">
+            <span class="close-modal" id="close-newsletter-modal">&times;</span>
+            <div class="newsletter-success">
+                <i class="fas fa-envelope-open-text"></i>
+                <h2 data-i18n="newsletter_success_title">Thank You for Subscribing!</h2>
+                <p data-i18n="newsletter_success_message">You've been successfully added to our mailing list. Get ready for exclusive offers, new releases, and reading recommendations.</p>
+            </div>
+            <button id="close-newsletter-btn" class="primary-btn" data-i18n="newsletter_close">Close</button>
+        </div>
+    </div>
+
+    <!-- AOS JS Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <!-- Main Scripts -->
+    <script src="js/books.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/darkmode.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/checkout.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
