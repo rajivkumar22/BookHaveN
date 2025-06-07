@@ -19,6 +19,8 @@ const i18nModule = (function() {
             nav_offers: "Special Offers",
             nav_login: "Login",
             nav_dashboard: "Dashboard",
+            nav_logout: "Logout",
+            logout_btn: "Logout",
             
             // Categories
             categories_title: "Browse By Categories",
@@ -35,6 +37,9 @@ const i18nModule = (function() {
             
             // Books section
             books_title: "Our Collection",
+            new_arrivals_title: "New Arrivals",
+            bestsellers_title: "Bestsellers",
+            offers_title: "Special Offers",
             
             // Filters
             filter_genre: "Genre:",
@@ -201,6 +206,8 @@ const i18nModule = (function() {
             nav_offers: "विशेष ऑफर",
             nav_login: "लॉगिन",
             nav_dashboard: "डैशबोर्ड",
+            nav_logout: "लॉगआउट",
+            logout_btn: "लॉगआउट",
             
             // Categories
             categories_title: "श्रेणियों के अनुसार ब्राउज़ करें",
@@ -217,6 +224,9 @@ const i18nModule = (function() {
             
             // Books section
             books_title: "हमारा संग्रह",
+            new_arrivals_title: "नवीन आगमन",
+            bestsellers_title: "बेस्टसेलर",
+            offers_title: "विशेष ऑफर",
             
             // Filters
             filter_genre: "शैली:",
@@ -383,6 +393,8 @@ const i18nModule = (function() {
             nav_offers: "विशेष ऑफर",
             nav_login: "लॉगिन",
             nav_dashboard: "डैशबोर्ड",
+            nav_logout: "लॉगआउट",
+            logout_btn: "लॉगआउट",
             
             // Categories
             categories_title: "श्रेणी अनुसार देखू",
@@ -399,6 +411,9 @@ const i18nModule = (function() {
             
             // Books section
             books_title: "हमर संग्रह",
+            new_arrivals_title: "नव आगमन",
+            bestsellers_title: "बेस्टसेलर",
+            offers_title: "विशेष ऑफर",
             
             // Filters
             filter_genre: "विधा:",

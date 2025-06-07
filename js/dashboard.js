@@ -213,7 +213,16 @@ const dashboardModule = (function() {
                 wishlistItem.className = 'wishlist-item';
                 wishlistItem.innerHTML = `
                     <div class="wishlist-image" style="background-color: ${book.coverColor}">
-                        <i class="fas fa-book"></i>
+                        <div class="wishlist-cover-container">
+                            <img class="wishlist-cover-image" 
+                                 src="" 
+                                 alt="${book.title}" 
+                                 style="display: none;" 
+                                 loading="lazy">
+                            <div class="wishlist-image-placeholder">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
                     </div>
                     <div class="wishlist-info">
                         <h3 class="wishlist-title">${book.title}</h3>
@@ -229,6 +238,37 @@ const dashboardModule = (function() {
                         </div>
                     </div>
                 `;
+                
+                // Load cover image for wishlist item
+                const loadWishlistCover = async () => {
+                    const coverImage = wishlistItem.querySelector('.wishlist-cover-image');
+                    const placeholder = wishlistItem.querySelector('.wishlist-image-placeholder');
+                    
+                    try {
+                        const coverUrl = await booksModule.loadCoverImage(book.id, book.title, book.author);
+                        
+                        if (coverUrl) {
+                            const img = new Image();
+                            img.onload = () => {
+                                coverImage.src = coverUrl;
+                                coverImage.style.display = 'block';
+                                placeholder.style.display = 'none';
+                            };
+                            img.onerror = () => {
+                                placeholder.style.display = 'flex';
+                            };
+                            img.src = coverUrl;
+                        } else {
+                            placeholder.style.display = 'flex';
+                        }
+                    } catch (error) {
+                        console.warn('Error loading wishlist cover:', error);
+                        placeholder.style.display = 'flex';
+                    }
+                };
+                
+                // Load cover with delay
+                setTimeout(loadWishlistCover, Math.random() * 300);
                 
                 wishlistContainer.appendChild(wishlistItem);
             }
@@ -429,6 +469,22 @@ const dashboardModule = (function() {
             
             // Set up profile form submission
             document.getElementById('profile-form').addEventListener('submit', handleProfileFormSubmit);
+            
+            // Set up logout button
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                // Close dashboard modal first
+                document.getElementById('dashboard-modal').classList.remove('active');
+                
+                // Call logout function from auth module
+                if (typeof authModule !== 'undefined' && authModule.logout) {
+                    authModule.logout();
+                    
+                    // Show logout notification
+                    if (typeof showDashboardNotification === 'function') {
+                        showDashboardNotification('You have been logged out successfully', 'info');
+                    }
+                }
+            });
             
             // Set up dashboard link in mobile menu
             document.querySelector('.dashboard-link a').addEventListener('click', function(e) {

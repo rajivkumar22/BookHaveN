@@ -3,6 +3,95 @@
  * Contains the book data and functions for managing books display, filtering, and pagination
  */
 
+// Cover image cache for storing loaded images
+const coverImageCache = new Map();
+
+/**
+ * Function to fetch book cover from Open Library API
+ * @param {string} title - Book title
+ * @param {string} author - Book author
+ * @returns {Promise<string>} - Cover image URL or null
+ */
+const fetchBookCover = async (title, author) => {
+    try {
+        // Use Open Library search API
+        const searchQuery = `${title} ${author}`.replace(/\s+/g, '+');
+        const response = await fetch(`https://openlibrary.org/search.json?q=${searchQuery}&limit=1`);
+        const data = await response.json();
+        
+        if (data.docs && data.docs.length > 0) {
+            const book = data.docs[0];
+            if (book.cover_i) {
+                return `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`;
+            }
+        }
+        return null;
+    } catch (error) {
+        console.warn('Error fetching cover for:', title, error);
+        return null;
+    }
+};
+
+/**
+ * Function to load cover image with fallback
+ * @param {string} bookId - Book ID
+ * @param {string} title - Book title
+ * @param {string} author - Book author
+ * @returns {Promise<string>} - Cover image URL
+ */
+const loadCoverImage = async (bookId, title, author) => {
+    // Check cache first
+    if (coverImageCache.has(bookId)) {
+        return coverImageCache.get(bookId);
+    }
+    
+    // Check if we have predefined cover URLs in img.js
+    if (typeof window !== 'undefined' && window.bookCoversModule) {
+        const coverData = window.bookCoversModule.getBookCoverWithFallback(bookId);
+        if (coverData && coverData.cover) {
+            // Test if the primary cover loads
+            try {
+                const img = new Image();
+                img.src = coverData.cover;
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                    setTimeout(reject, 5000); // 5 second timeout
+                });
+                coverImageCache.set(bookId, coverData.cover);
+                return coverData.cover;
+            } catch (error) {
+                // Try fallback
+                if (coverData.fallback) {
+                    try {
+                        const fallbackImg = new Image();
+                        fallbackImg.src = coverData.fallback;
+                        await new Promise((resolve, reject) => {
+                            fallbackImg.onload = resolve;
+                            fallbackImg.onerror = reject;
+                            setTimeout(reject, 5000);
+                        });
+                        coverImageCache.set(bookId, coverData.fallback);
+                        return coverData.fallback;
+                    } catch (fallbackError) {
+                        console.warn('Both primary and fallback covers failed for:', bookId);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Try fetching from API as last resort
+    const apiCover = await fetchBookCover(title, author);
+    if (apiCover) {
+        coverImageCache.set(bookId, apiCover);
+        return apiCover;
+    }
+    
+    // Return null if no cover found
+    return null;
+};
+
 // Book data with multiple books per genre (15-20 books per genre)
 const booksData = [
     // Fiction Books
@@ -1819,6 +1908,248 @@ const booksData = [
         language: "English",
         pages: 304,
         coverColor: "#90a955"
+    },
+
+    // New Arrivals - Recent Books (2023-2025)
+    {
+        id: "fiction-new-1",
+        title: "Fourth Wing",
+        author: "Rebecca Ross",
+        genre: "Fiction",
+        subgenre: "Fantasy Romance",
+        price: 18.99,
+        rating: 4.7,
+        ratingCount: 2456,
+        description: "A thrilling fantasy romance about a war college where dragon riders are trained. Violet Sorrengail thought she'd be safe in the Scribe Quadrant, but her mother has other plans, sending her to the riders' quadrant where death is more likely than graduation.",
+        publishedDate: "2023-05-02",
+        language: "English",
+        pages: 512,
+        coverColor: "#8b5a3c"
+    },
+    {
+        id: "fiction-new-2",
+        title: "Tomorrow, and Tomorrow, and Tomorrow",
+        author: "Gabrielle Zevin",
+        genre: "Fiction",
+        subgenre: "Contemporary Fiction",
+        price: 17.99,
+        rating: 4.8,
+        ratingCount: 3245,
+        description: "A novel about friendship, art, love, and betrayal, spanning three decades. It follows Sam and Sadie, two friends who reunite as adults to create groundbreaking video games, exploring the nature of creativity and connection in the digital age.",
+        publishedDate: "2023-07-15",
+        language: "English",
+        pages: 416,
+        coverColor: "#4a90e2"
+    },
+    {
+        id: "thriller-new-1",
+        title: "The Seven Moons of Maali Almeida",
+        author: "Shehan Karunatilaka",
+        genre: "Thriller",
+        subgenre: "Supernatural Thriller",
+        price: 16.99,
+        rating: 4.5,
+        ratingCount: 1876,
+        description: "A darkly comic supernatural thriller about a photographer who wakes up dead and has seven moons to contact the living and solve his own murder. Set against the backdrop of 1990s Sri Lanka's civil war.",
+        publishedDate: "2023-08-22",
+        language: "English",
+        pages: 384,
+        coverColor: "#d4af37"
+    },
+    {
+        id: "romance-new-1",
+        title: "Book Lovers",
+        author: "Emily Henry",
+        genre: "Romance",
+        subgenre: "Contemporary Romance",
+        price: 15.99,
+        rating: 4.6,
+        ratingCount: 4321,
+        description: "A literary agent who finds herself living out a small-town romance novel, except she's cast as the other woman. When Nora Stephens encounters the brooding editor from her worst professional nightmare, sparks fly in unexpected ways.",
+        publishedDate: "2023-06-10",
+        language: "English",
+        pages: 368,
+        coverColor: "#ff6b6b"
+    },
+    {
+        id: "nonfiction-new-1",
+        title: "Spare",
+        author: "Prince Harry",
+        genre: "Non-fiction",
+        subgenre: "Autobiography",
+        price: 22.99,
+        rating: 4.4,
+        ratingCount: 5432,
+        description: "The Duke of Sussex's memoir, offering unprecedented revelations about his life within the British Royal Family. A raw, unflinching account of his journey from tragedy to healing, duty to freedom.",
+        publishedDate: "2023-01-10",
+        language: "English",
+        pages: 416,
+        coverColor: "#1e3a8a"
+    },
+    {
+        id: "fiction-new-3",
+        title: "The Atlas Six",
+        author: "Olivie Blake",
+        genre: "Fiction",
+        subgenre: "Dark Academia Fantasy",
+        price: 19.99,
+        rating: 4.3,
+        ratingCount: 2987,
+        description: "Six young magicians are chosen to join an exclusive society with access to ancient magical knowledge. But only five will be initiated, and one will be eliminated. A dark academia fantasy about power, knowledge, and betrayal.",
+        publishedDate: "2024-03-12",
+        language: "English",
+        pages: 448,
+        coverColor: "#2c3e50"
+    },
+    {
+        id: "thriller-new-2",
+        title: "The Thursday Murder Club",
+        author: "Richard Osman",
+        genre: "Thriller",
+        subgenre: "Cozy Mystery",
+        price: 14.99,
+        rating: 4.7,
+        ratingCount: 3654,
+        description: "Four unlikely friends in a retirement village meet weekly to investigate cold cases. When a real murder occurs nearby, they find themselves in the middle of their first live case with deadly consequences.",
+        publishedDate: "2024-01-18",
+        language: "English",
+        pages: 352,
+        coverColor: "#8fbc8f"
+    },
+    {
+        id: "romance-new-2",
+        title: "People We Meet on Vacation",
+        author: "Emily Henry",
+        genre: "Romance",
+        subgenre: "Contemporary Romance",
+        price: 16.99,
+        rating: 4.8,
+        ratingCount: 3876,
+        description: "Best friends Poppy and Alex take a vacation together every year, until they stopped speaking. Two years later, Poppy convinces Alex to take one more trip together, hoping to fix their friendship and maybe find something more.",
+        publishedDate: "2024-04-07",
+        language: "English",
+        pages: 384,
+        coverColor: "#ffd93d"
+    },
+    {
+        id: "fiction-new-4",
+        title: "Lessons in Chemistry",
+        author: "Bonnie Garmus",
+        genre: "Fiction",
+        subgenre: "Historical Fiction",
+        price: 17.99,
+        rating: 4.6,
+        ratingCount: 4123,
+        description: "Set in 1960s California, this novel follows Elizabeth Zott, a scientist who finds herself hosting a cooking show. Her unusual approach to cooking and life challenges the status quo and inspires women to change the world.",
+        publishedDate: "2024-05-20",
+        language: "English",
+        pages: 400,
+        coverColor: "#ff9800"
+    },
+    {
+        id: "nonfiction-new-2",
+        title: "The Midnight Library",
+        author: "Matt Haig",
+        genre: "Non-fiction",
+        subgenre: "Philosophy",
+        price: 15.99,
+        rating: 4.5,
+        ratingCount: 2987,
+        description: "A philosophical exploration of life's infinite possibilities. Between life and death exists a magical library where you can live alternate versions of your life and discover what truly makes existence meaningful.",
+        publishedDate: "2024-08-15",
+        language: "English",
+        pages: 288,
+        coverColor: "#4a5568"
+    },
+    {
+        id: "thriller-new-3",
+        title: "The Invisible Life of Addie LaRue",
+        author: "V.E. Schwab",
+        genre: "Thriller",
+        subgenre: "Fantasy Thriller",
+        price: 18.99,
+        rating: 4.4,
+        ratingCount: 3245,
+        description: "A young woman makes a desperate bargain to live forever but is cursed to be forgotten by everyone she meets. After 300 years, she meets a young man in a bookstore who somehow remembers her name.",
+        publishedDate: "2024-09-03",
+        language: "English",
+        pages: 544,
+        coverColor: "#8e44ad"
+    },
+    {
+        id: "romance-new-3",
+        title: "The Love Hypothesis",
+        author: "Ali Hazel",
+        genre: "Romance",
+        subgenre: "Contemporary Romance",
+        price: 14.99,
+        rating: 4.7,
+        ratingCount: 4567,
+        description: "A PhD student pretends to date a notoriously difficult professor to convince her best friend that she's moved on from her unrequited crush. What starts as a fake relationship becomes complicated when real feelings develop.",
+        publishedDate: "2024-11-12",
+        language: "English",
+        pages: 432,
+        coverColor: "#e91e63"
+    },
+    {
+        id: "fiction-new-5",
+        title: "Project Hail Mary",
+        author: "Andy Weir",
+        genre: "Fiction",
+        subgenre: "Science Fiction",
+        price: 19.99,
+        rating: 4.9,
+        ratingCount: 5432,
+        description: "A man wakes up on a spaceship with no memory of how he got there, only to discover he's humanity's last hope. A thrilling journey of survival, friendship, and science as he attempts to save both Earth and an alien civilization.",
+        publishedDate: "2025-01-25",
+        language: "English",
+        pages: 496,
+        coverColor: "#00bcd4"
+    },
+    {
+        id: "nonfiction-new-3",
+        title: "Crying in H Mart",
+        author: "Michelle Zauner",
+        genre: "Non-fiction",
+        subgenre: "Memoir",
+        price: 16.99,
+        rating: 4.8,
+        ratingCount: 3876,
+        description: "A powerful memoir about growing up Korean American, losing her mother to cancer, and finding healing through cooking and music. A story about family, grief, identity, and the ties that bind us to our heritage.",
+        publishedDate: "2025-02-14",
+        language: "English",
+        pages: 256,
+        coverColor: "#f06292"
+    },
+    {
+        id: "fiction-new-6",
+        title: "The Priory of the Orange Tree",
+        author: "Samantha Shannon",
+        genre: "Fiction",
+        subgenre: "Epic Fantasy",
+        price: 21.99,
+        rating: 4.5,
+        ratingCount: 2765,
+        description: "An epic fantasy featuring dragons, multiple kingdoms, and strong female protagonists. As an ancient evil stirs, unlikely alliances must be forged between East and West to prevent the return of the dreaded Nameless One.",
+        publishedDate: "2025-03-08",
+        language: "English",
+        pages: 848,
+        coverColor: "#ff5722"
+    },
+    {
+        id: "thriller-new-4",
+        title: "The Sanatorium",
+        author: "Sarah Pearse",
+        genre: "Thriller",
+        subgenre: "Psychological Thriller",
+        price: 15.99,
+        rating: 4.3,
+        ratingCount: 2456,
+        description: "A detective arrives at a remote hotel in the Swiss Alps for her brother's engagement party, but when a snowstorm traps the guests and a woman goes missing, she realizes the hotel's disturbing past may be connected to the present danger.",
+        publishedDate: "2025-04-19",
+        language: "English",
+        pages: 400,
+        coverColor: "#607d8b"
     }
 ];
 
@@ -1901,8 +2232,18 @@ const createBookCard = (book) => {
     // Create book HTML structure
     bookCard.innerHTML = `
         <div class="book-image" style="background-color: ${book.coverColor}">
-            <div class="book-image-placeholder">
-                <i class="fas fa-book"></i>
+            <div class="book-cover-container">
+                <img class="book-cover-image" 
+                     src="" 
+                     alt="${book.title} by ${book.author}" 
+                     style="display: none;" 
+                     loading="lazy">
+                <div class="book-image-placeholder">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="book-cover-loading" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
             </div>
             <div class="book-image-overlay">
                 <div class="overlay-btn preview-btn" data-id="${book.id}" title="Quick View">
@@ -1930,6 +2271,52 @@ const createBookCard = (book) => {
             </div>
         </div>
     `;
+    
+    // Load cover image asynchronously
+    const loadBookCoverAsync = async () => {
+        const coverContainer = bookCard.querySelector('.book-cover-container');
+        const coverImage = bookCard.querySelector('.book-cover-image');
+        const placeholder = bookCard.querySelector('.book-image-placeholder');
+        const loadingIndicator = bookCard.querySelector('.book-cover-loading');
+        
+        try {
+            // Show loading indicator
+            loadingIndicator.style.display = 'flex';
+            placeholder.style.display = 'none';
+            
+            // Try to load cover image
+            const coverUrl = await loadCoverImage(book.id, book.title, book.author);
+            
+            if (coverUrl) {
+                // Load the image
+                const img = new Image();
+                img.onload = () => {
+                    coverImage.src = coverUrl;
+                    coverImage.style.display = 'block';
+                    loadingIndicator.style.display = 'none';
+                    placeholder.style.display = 'none';
+                };
+                img.onerror = () => {
+                    // If image fails to load, show placeholder
+                    loadingIndicator.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                };
+                img.src = coverUrl;
+            } else {
+                // No cover found, show placeholder
+                loadingIndicator.style.display = 'none';
+                placeholder.style.display = 'flex';
+            }
+        } catch (error) {
+            console.warn('Error loading cover for book:', book.id, error);
+            // Show placeholder on error
+            loadingIndicator.style.display = 'none';
+            placeholder.style.display = 'flex';
+        }
+    };
+    
+    // Load cover image with a small delay to avoid overwhelming the browser
+    setTimeout(loadBookCoverAsync, Math.random() * 500);
     
     return bookCard;
 };
@@ -2333,6 +2720,30 @@ const loadBookReviews = (bookId) => {
     }
 };
 
+// Genre image mapping for category cards with bright, symbolic, day/night visible images
+const genreImages = {
+    'fiction': 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&h=600&fit=crop&auto=format&q=80&brightness=10', // Bright magical castle with glowing lights - fantasy fiction
+    'non-fiction': 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop&auto=format&q=80&brightness=15', // Bright stack of colorful books with coffee - learning and knowledge
+    'romance': 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&h=600&fit=crop&auto=format&q=80', // Beautiful red roses bouquet - classic romance symbol
+    'thriller': 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop&auto=format&q=80', // Dark mysterious open book with dramatic shadows - suspense
+    'horror': 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&h=600&fit=crop&auto=format', // Spooky dark atmosphere with old books (keeping as you liked it)
+    'sad': 'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=400&h=600&fit=crop&auto=format&q=80', // Dark figure in corner showing ultimate misery and despair - perfect for sad genre
+    'history': 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=400&h=600&fit=crop&auto=format&q=80&brightness=15', // Bright ancient clock and gears - time and history
+    'realistic': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=600&fit=crop&auto=format&q=80&brightness=10' // Bright city skyline - modern realistic life
+};
+
+// Alternative/fallback images for genres in case primary images don't load
+const genreImagesFallback = {
+    'fiction': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&auto=format&q=80',
+    'non-fiction': 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop&auto=format&q=80',
+    'romance': 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=600&fit=crop&auto=format&q=80',
+    'thriller': 'https://images.unsplash.com/photo-1519452575417-564c1401ecc0?w=400&h=600&fit=crop&auto=format&q=80',
+    'horror': 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=600&fit=crop&auto=format&q=80',
+    'sad': 'https://images.unsplash.com/photo-1515894203077-9cd549c85659?w=400&h=600&fit=crop&auto=format&q=80', // Crying tear - deep sadness emotion
+    'history': 'https://images.unsplash.com/photo-1568667256549-094345857637?w=400&h=600&fit=crop&auto=format&q=80',
+    'realistic': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=600&fit=crop&auto=format&q=80'
+};
+
 // Initialize categories section
 const initializeCategoriesSection = () => {
     const categoriesCarousel = document.getElementById('categories-carousel');
@@ -2346,16 +2757,60 @@ const initializeCategoriesSection = () => {
         categoryCard.className = 'category-card';
         categoryCard.setAttribute('data-genre', genre.toLowerCase());
         
-        // Choose a book from this genre to use its color
+        // Get genre-specific image or fallback to a default color
         const genreBooks = getBooksByGenre(genre.toLowerCase());
         const sampleBook = genreBooks[0];
+        const genreImage = genreImages[genre.toLowerCase()] || null;
         
-        categoryCard.innerHTML = `
-            <div class="category-card-bg" style="background-color: ${sampleBook.coverColor}"></div>
-            <div class="category-card-overlay">
-                <h3 class="category-card-title" data-i18n="genre_${genre.toLowerCase()}">${genre}</h3>
-            </div>
-        `;
+        if (genreImage) {
+            categoryCard.innerHTML = `
+                <div class="category-card-bg" style="background-image: url('${genreImage}'); background-size: cover; background-position: center; background-repeat: no-repeat;"></div>
+                <div class="category-card-overlay">
+                    <h3 class="category-card-title" data-i18n="genre_${genre.toLowerCase()}">${genre}</h3>
+                </div>
+            `;
+            
+            // Add error handling for image loading with fallback
+            const img = new Image();
+            img.onload = () => {
+                // Image loaded successfully, keep the background image
+            };
+            img.onerror = () => {
+                // Primary image failed to load, try fallback image
+                const fallbackImage = genreImagesFallback[genre.toLowerCase()];
+                if (fallbackImage) {
+                    const bgElement = categoryCard.querySelector('.category-card-bg');
+                    if (bgElement) {
+                        bgElement.style.backgroundImage = `url('${fallbackImage}')`;
+                        
+                        // Test fallback image loading
+                        const fallbackImg = new Image();
+                        fallbackImg.onerror = () => {
+                            // Fallback image also failed, use solid color
+                            bgElement.style.backgroundImage = 'none';
+                            bgElement.style.backgroundColor = sampleBook.coverColor;
+                        };
+                        fallbackImg.src = fallbackImage;
+                    }
+                } else {
+                    // No fallback available, use solid color
+                    const bgElement = categoryCard.querySelector('.category-card-bg');
+                    if (bgElement) {
+                        bgElement.style.backgroundImage = 'none';
+                        bgElement.style.backgroundColor = sampleBook.coverColor;
+                    }
+                }
+            };
+            img.src = genreImage;
+        } else {
+            // Fallback to solid color if image is not available
+            categoryCard.innerHTML = `
+                <div class="category-card-bg" style="background-color: ${sampleBook.coverColor}"></div>
+                <div class="category-card-overlay">
+                    <h3 class="category-card-title" data-i18n="genre_${genre.toLowerCase()}">${genre}</h3>
+                </div>
+            `;
+        }
         
         categoriesCarousel.appendChild(categoryCard);
     });
@@ -2416,11 +2871,64 @@ const initializeOffersBanner = () => {
             <div class="banner-content">
                 <h2 data-i18n="banner_title_${index}">${offer.title}</h2>
                 <p data-i18n="banner_description_${index}">${offer.description}</p>
-                <a href="#" class="banner-btn" data-i18n="banner_button_${index}">${offer.buttonText}</a>
+                <a href="#" class="banner-btn" data-banner-index="${index}" data-banner-text="${offer.buttonText}" data-i18n="banner_button_${index}">${offer.buttonText}</a>
             </div>
         `;
         
         offersBanner.appendChild(banner);
+    });
+    
+    // Add click event listeners to banner buttons using event delegation
+    offersBanner.addEventListener('click', (e) => {
+        // Check if the clicked element is a banner button
+        if (e.target.classList.contains('banner-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = e.target;
+            const bannerIndex = parseInt(button.getAttribute('data-banner-index'));
+            const buttonText = button.getAttribute('data-banner-text') || button.textContent.trim();
+            
+            console.log('Banner button clicked - Text:', buttonText, 'Index:', bannerIndex);
+            
+            // Handle different button actions - use index for reliability
+            if (bannerIndex === 0) {
+                console.log('Shop Now button (index 0) detected - scrolling to offers section');
+                const targetSection = document.getElementById('offers');
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    console.error('Offers section not found!');
+                }
+            } else if (bannerIndex === 1) {
+                console.log('Explore button (index 1) detected - scrolling to new arrivals section');
+                const targetSection = document.getElementById('new-arrivals');
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    console.error('New arrivals section not found!');
+                }
+            } else if (bannerIndex === 2) {
+                console.log('Join Now button (index 2) detected');
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser) {
+                    console.log('User logged in - scrolling to new arrivals');
+                    const targetSection = document.getElementById('new-arrivals');
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        console.error('New arrivals section not found!');
+                    }
+                } else {
+                    console.log('User not logged in - opening signup modal');
+                    const authModal = document.getElementById('auth-modal');
+                    const signupTab = document.getElementById('signup-tab');
+                    if (authModal && signupTab) {
+                        signupTab.click();
+                        authModal.classList.add('active');
+                    }
+                }
+            }
+        }
     });
     
     // Set up banner rotation
@@ -2471,6 +2979,146 @@ const getBookById = (bookId) => {
     return booksData.find(book => book.id === bookId);
 };
 
+// Get new arrivals (books published in the last 2 years)
+const getNewArrivals = () => {
+    const currentYear = new Date().getFullYear();
+    const twoYearsAgo = currentYear - 2;
+    
+    return booksData.filter(book => {
+        const publishYear = new Date(book.publishedDate).getFullYear();
+        return publishYear >= twoYearsAgo;
+    }).sort((a, b) => new Date(b.publishedDate) - new Date(a.publishedDate)).slice(0, 12);
+};
+
+// Get bestsellers (books with highest ratings and rating counts)
+const getBestsellers = () => {
+    return booksData
+        .filter(book => book.rating >= 4.0 && book.ratingCount >= 1000)
+        .sort((a, b) => {
+            // Sort by rating first, then by rating count
+            if (b.rating !== a.rating) {
+                return b.rating - a.rating;
+            }
+            return b.ratingCount - a.ratingCount;
+        })
+        .slice(0, 12);
+};
+
+// Get special offers (books with discounts)
+const getSpecialOffers = () => {
+    return booksData
+        .map(book => {
+            // Add discount information to some books
+            const discountChance = Math.random();
+            if (discountChance < 0.3) { // 30% of books have discounts
+                const discountPercentage = Math.floor(Math.random() * 40) + 10; // 10-50% discount
+                const originalPrice = book.price;
+                const discountedPrice = originalPrice * (1 - discountPercentage / 100);
+                
+                return {
+                    ...book,
+                    hasOffer: true,
+                    originalPrice: originalPrice,
+                    discountedPrice: parseFloat(discountedPrice.toFixed(2)),
+                    discountPercentage: discountPercentage
+                };
+            }
+            return book;
+        })
+        .filter(book => book.hasOffer)
+        .slice(0, 12);
+};
+
+// Initialize New Arrivals Section
+const initializeNewArrivalsSection = () => {
+    const newArrivalsCarousel = document.getElementById('new-arrivals-carousel');
+    if (!newArrivalsCarousel) return;
+    
+    const newArrivals = getNewArrivals();
+    newArrivalsCarousel.innerHTML = '';
+    
+    newArrivals.forEach(book => {
+        const bookCard = createBookCard(book);
+        
+        // Add new arrival badge
+        const newBadge = document.createElement('div');
+        newBadge.className = 'new-badge';
+        newBadge.textContent = 'NEW';
+        bookCard.appendChild(newBadge);
+        
+        newArrivalsCarousel.appendChild(bookCard);
+    });
+    
+    // Apply translations if i18n is initialized
+    if (typeof translateElements === 'function') {
+        translateElements(newArrivalsCarousel);
+    }
+};
+
+// Initialize Bestsellers Section
+const initializeBestsellersSection = () => {
+    const bestsellersCarousel = document.getElementById('bestsellers-carousel');
+    if (!bestsellersCarousel) return;
+    
+    const bestsellers = getBestsellers();
+    bestsellersCarousel.innerHTML = '';
+    
+    bestsellers.forEach(book => {
+        const bookCard = createBookCard(book);
+        
+        // Add bestseller badge
+        const bestsellerBadge = document.createElement('div');
+        bestsellerBadge.className = 'bestseller-badge';
+        bestsellerBadge.textContent = 'BESTSELLER';
+        bookCard.appendChild(bestsellerBadge);
+        
+        bestsellersCarousel.appendChild(bookCard);
+    });
+    
+    // Apply translations if i18n is initialized
+    if (typeof translateElements === 'function') {
+        translateElements(bestsellersCarousel);
+    }
+};
+
+// Initialize Special Offers Section
+const initializeSpecialOffersSection = () => {
+    const offersCarousel = document.getElementById('offers-carousel');
+    if (!offersCarousel) return;
+    
+    const specialOffers = getSpecialOffers();
+    offersCarousel.innerHTML = '';
+    
+    specialOffers.forEach(book => {
+        const bookCard = createBookCard(book);
+        
+        // Add offer badge
+        const offerBadge = document.createElement('div');
+        offerBadge.className = 'offer-badge';
+        offerBadge.textContent = `${book.discountPercentage}% OFF`;
+        bookCard.appendChild(offerBadge);
+        
+        // Update price display to show discount
+        const priceElement = bookCard.querySelector('.price');
+        if (priceElement) {
+            priceElement.innerHTML = `
+                <div class="discount-price">
+                    <span class="discounted-price">$${book.discountedPrice}</span>
+                    <span class="original-price">$${book.originalPrice}</span>
+                    <span class="discount-percentage">${book.discountPercentage}% OFF</span>
+                </div>
+            `;
+        }
+        
+        offersCarousel.appendChild(bookCard);
+    });
+    
+    // Apply translations if i18n is initialized
+    if (typeof translateElements === 'function') {
+        translateElements(offersCarousel);
+    }
+};
+
 // Export the functions and data that need to be accessible from other modules
 window.booksModule = {
     getAllGenres,
@@ -2484,5 +3132,13 @@ window.booksModule = {
     updateRecentlyViewedSection,
     displayBooks,
     getBookById,
-    booksData
+    loadCoverImage,
+    booksData,
+    // New functions
+    getNewArrivals,
+    getBestsellers,
+    getSpecialOffers,
+    initializeNewArrivalsSection,
+    initializeBestsellersSection,
+    initializeSpecialOffersSection
 };

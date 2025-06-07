@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
     booksModule.initializeOffersBanner();
     booksModule.initializeBooksSection();
     booksModule.updateRecentlyViewedSection();
+    
+    // Initialize new sections
+    booksModule.initializeNewArrivalsSection();
+    booksModule.initializeBestsellersSection();
+    booksModule.initializeSpecialOffersSection();
 
     // Global event listeners for modals
     setupModalEventListeners();
@@ -180,6 +185,17 @@ function setupMobileMenu() {
         e.preventDefault();
         mobileMenu.classList.remove('active');
         document.getElementById('auth-modal').classList.add('active');
+    });
+    
+    // Logout link in mobile menu
+    document.querySelector('.mobile-nav .logout-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        mobileMenu.classList.remove('active');
+        
+        // Call logout function from auth module
+        if (typeof authModule !== 'undefined' && authModule.logout) {
+            authModule.logout();
+        }
     });
 }
 

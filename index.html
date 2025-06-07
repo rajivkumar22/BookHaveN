@@ -78,6 +78,7 @@
                     <li><a href="#new-arrivals" data-i18n="nav_new_arrivals">New Arrivals</a></li>
                     <li><a href="#" class="login-link" data-i18n="nav_login">Login</a></li>
                     <li class="dashboard-link hidden"><a href="#" data-i18n="nav_dashboard">Dashboard</a></li>
+                    <li class="logout-link hidden"><a href="#" data-i18n="nav_logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -119,6 +120,36 @@
                 <button class="category-nav-btn next" id="category-next">
                     <i class="fas fa-chevron-right"></i>
                 </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section id="new-arrivals" class="new-arrivals-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="new_arrivals_title">New Arrivals</h2>
+            <div class="new-arrivals-carousel" id="new-arrivals-carousel">
+                <!-- New arrival books will be added dynamically here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Bestsellers Section -->
+    <section id="bestsellers" class="bestsellers-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="bestsellers_title">Bestsellers</h2>
+            <div class="bestsellers-carousel" id="bestsellers-carousel">
+                <!-- Bestseller books will be added dynamically here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offers Section -->
+    <section id="offers" class="offers-section">
+        <div class="container">
+            <h2 class="section-title" data-i18n="offers_title">Special Offers</h2>
+            <div class="offers-carousel" id="offers-carousel">
+                <!-- Books with special offers will be added dynamically here -->
             </div>
         </div>
     </section>
@@ -420,7 +451,9 @@
     <div class="modal" id="dashboard-modal">
         <div class="modal-content dashboard-content">
             <span class="close-modal" id="close-dashboard-modal">&times;</span>
-            <h2 data-i18n="dashboard_title">My Account</h2>
+            <div class="dashboard-header">
+                <h2 data-i18n="dashboard_title">My Account</h2>
+            </div>
             <div class="dashboard-tabs">
                 <button id="profile-tab" class="dashboard-tab active" data-i18n="dashboard_profile">Profile</button>
                 <button id="wishlist-tab" class="dashboard-tab" data-i18n="dashboard_wishlist">Wishlist</button>
@@ -487,6 +520,13 @@
                     <!-- Order history will be added dynamically -->
                 </div>
             </div>
+            
+            <!-- Dashboard Footer with Logout Button -->
+            <div class="dashboard-footer">
+                <button id="logout-btn" class="logout-btn" data-i18n="logout_btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
         </div>
     </div>
 
@@ -507,6 +547,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     
     <!-- Main Scripts -->
+    <script src="js/img.js"></script>
     <script src="js/books.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/darkmode.js"></script>

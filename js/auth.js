@@ -74,6 +74,7 @@ const authModule = (function() {
         // Update mobile menu
         document.querySelector('.login-link').classList.add('hidden');
         document.querySelector('.dashboard-link').classList.remove('hidden');
+        document.querySelector('.logout-link').classList.remove('hidden');
         
         // Add CSS for user initial
         addUserInitialStyles();
@@ -88,6 +89,7 @@ const authModule = (function() {
         // Update mobile menu
         document.querySelector('.login-link').classList.remove('hidden');
         document.querySelector('.dashboard-link').classList.add('hidden');
+        document.querySelector('.logout-link').classList.add('hidden');
     };
     
     // Add styles for user initial display

@@ -97,6 +97,23 @@
         width: 95%;
     }
     
+    .dashboard-header {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    .dashboard-footer {
+        padding-top: 15px;
+        margin-top: 20px;
+    }
+    
+    .logout-btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        min-width: 100px;
+    }
+    
     .dashboard-tabs {
         flex-wrap: wrap;
     }
