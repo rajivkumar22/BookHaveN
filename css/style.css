@@ -226,6 +226,13 @@ header {
     border-radius: var(--button-radius);
     padding: 5px 10px;
     cursor: pointer;
+    color: var(--dark);
+}
+
+body.dark-mode .language-selector select {
+    background-color: var(--white);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
 }
 
 /* Dark Mode Toggle Styles */

@@ -8,10 +8,43 @@ const authModule = (function() {
     // Private variables and functions
     let isLoginForm = true; // Track which form is currently active
     
-    // Mock authentication (using localStorage)
+    // Password validation function
+    const validatePassword = function(password) {
+        const minLength = 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+        
+        let errors = [];
+        if (password.length < minLength) {
+            errors.push('Password must be at least 8 characters long');
+        }
+        if (!hasUpperCase) {
+            errors.push('Password must contain at least one uppercase letter');
+        }
+        if (!hasLowerCase) {
+            errors.push('Password must contain at least one lowercase letter');
+        }
+        if (!hasSpecialChar) {
+            errors.push('Password must contain at least one special character');
+        }
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
+    };
+    
+    // Hash password using SHA256
+    const hashPassword = function(password) {
+        return CryptoJS.SHA256(password).toString();
+    };
+    
+    // Mock authentication (using sessionStorage and hashed passwords)
     const authenticateUser = function(email, password) {
         const users = JSON.parse(localStorage.getItem('bookhavenUsers')) || [];
-        return users.find(user => user.email === email && user.password === password);
+        const hashedPassword = hashPassword(password);
+        return users.find(user => user.email === email && user.password === hashedPassword);
     };
     
     // Check if email already exists
@@ -45,21 +78,26 @@ const authModule = (function() {
         return newUser;
     };
     
-    // Set current user in localStorage
+    // Set current user in sessionStorage
     const setCurrentUser = function(user) {
-        // Remove password before storing in localStorage
+        // Remove password before storing in sessionStorage
         const userToStore = { ...user };
         delete userToStore.password;
         
-        localStorage.setItem('currentUser', JSON.stringify(userToStore));
+        sessionStorage.setItem('currentUser', JSON.stringify(userToStore));
         
         // Update UI for logged-in state
         updateUIForLoggedInUser(userToStore);
     };
     
+    // Get current user from sessionStorage
+    const getCurrentUser = function() {
+        return JSON.parse(sessionStorage.getItem('currentUser'));
+    };
+    
     // Log out current user
     const logoutUser = function() {
-        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
         
         // Update UI for logged-out state
         updateUIForLoggedOutUser();
@@ -190,6 +228,21 @@ const authModule = (function() {
             return;
         }
         
+        // Validate password
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.isValid) {
+            const prettyMessage =
+                '<strong>Password must meet the following requirements:</strong><br>' +
+                '<ul style="margin:8px 0 0 18px;padding:0;text-align:left;">' +
+                '<li>At least 8 characters</li>' +
+                '<li>One uppercase letter (A-Z)</li>' +
+                '<li>One lowercase letter (a-z)</li>' +
+                '<li>One special character (e.g. !@#$%^&amp;*)</li>' +
+                '</ul>';
+            showAuthNotification(prettyMessage, 'error', true);
+            return;
+        }
+        
         if (password !== confirmPassword) {
             showAuthNotification('Passwords do not match', 'error');
             return;
@@ -206,8 +259,11 @@ const authModule = (function() {
             return;
         }
         
-        // Register user
-        const newUser = registerUser(name, email, password);
+        // Hash password before storing
+        const hashedPassword = hashPassword(password);
+        
+        // Register user with hashed password
+        const newUser = registerUser(name, email, hashedPassword);
         
         // Set current user
         setCurrentUser(newUser);
@@ -223,7 +279,7 @@ const authModule = (function() {
     };
     
     // Show auth notification
-    const showAuthNotification = function(message, type) {
+    const showAuthNotification = function(message, type, isHTML) {
         // Create notification element if it doesn't exist
         let notification = document.querySelector('.auth-notification');
         
@@ -263,9 +319,12 @@ const authModule = (function() {
             `;
             document.head.appendChild(style);
         }
-        
         // Set notification content and show it
-        notification.textContent = message;
+        if (isHTML) {
+            notification.innerHTML = message;
+        } else {
+            notification.textContent = message;
+        }
         notification.className = `auth-notification ${type}`;
         notification.classList.add('show');
         
@@ -322,11 +381,9 @@ const authModule = (function() {
         },
         logout: logoutUser,
         isLoggedIn: function() {
-            return !!localStorage.getItem('currentUser');
+            return !!sessionStorage.getItem('currentUser');
         },
-        getCurrentUser: function() {
-            return JSON.parse(localStorage.getItem('currentUser'));
-        },
+        getCurrentUser: getCurrentUser,
         showLoginForm: function() {
             switchAuthForms(true);
             document.getElementById('auth-modal').classList.add('active');
